@@ -8,12 +8,12 @@ export type TelegramUser = {
 
 export type UserProfile = {
   id: number | string;
-  fullName?: string;
-  phone?: string;
+  firstName?: string;
+  lastName?: string;
   username?: string;
   telegramId?: number;
   role?: string;
-  balance?: number;
+  createdAt?: string;
 };
 
 export type Product = {
@@ -55,4 +55,10 @@ export type Debt = {
   totalPaid: number;
   remainingDebt: number;
   currency?: string;
+  debts?: Array<{
+    id: number;
+    totalAmount: number;
+    paidAmount: number;
+    status: string;
+  }>;
 };

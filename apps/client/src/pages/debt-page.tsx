@@ -14,9 +14,21 @@ export const DebtPage = () => {
   const queryClient = useQueryClient();
   const { pushToast } = useToast();
   const { data: debt, isLoading, isError, error, refetch } = useDebt();
+  const payableDebt = debt?.debts?.find(
+    (item) => Number(item.totalAmount) - Number(item.paidAmount) > 0,
+  );
+  const payableAmount = payableDebt
+    ? Math.max(Number(payableDebt.totalAmount) - Number(payableDebt.paidAmount), 0)
+    : 0;
 
   const payMutation = useMutation({
-    mutationFn: (amount: number) => createPayment(amount),
+    mutationFn: () => {
+      if (!payableDebt) {
+        throw new Error('No open debt found for payment.');
+      }
+
+      return createPayment(payableDebt.id, payableAmount);
+    },
     onSuccess: async () => {
       notifyTelegram('success');
       pushToast({
@@ -79,15 +91,15 @@ export const DebtPage = () => {
               <div>
                 <h3 className="text-base font-bold text-ink">Pay outstanding balance</h3>
                 <p className="mt-1 text-sm text-ink/60">
-                  The action sends `POST /payments` with the remaining amount.
+                  The action sends `POST /payments` with `debtId` and the remaining amount.
                 </p>
               </div>
             </div>
 
             <button
               type="button"
-              onClick={() => payMutation.mutate(debt.remainingDebt)}
-              disabled={!debt.remainingDebt || payMutation.isPending}
+              onClick={() => payMutation.mutate()}
+              disabled={!payableDebt || !payableAmount || payMutation.isPending}
               className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-4 py-4 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
             >
               {payMutation.isPending ? 'Sending payment...' : 'Pay'}

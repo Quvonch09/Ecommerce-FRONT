@@ -1,25 +1,14 @@
 import type { AdminUser } from '../types';
-import { api } from './api';
 
-const normalizeUsers = (data: unknown): AdminUser[] => {
-  if (Array.isArray(data)) {
-    return data as AdminUser[];
-  }
-
-  if (data && typeof data === 'object') {
-    const payload = data as { items?: AdminUser[]; content?: AdminUser[] };
-    return payload.items || payload.content || [];
-  }
-
-  return [];
+export const getAdminUsers = async (): Promise<AdminUser[]> => {
+  return Promise.reject(new Error(
+    'Swagger spec does not expose /admin/users. Backend must add admin user-management endpoints before this page can work.',
+  )) as Promise<AdminUser[]>;
 };
 
-export const getAdminUsers = async () => {
-  const { data } = await api.get('/admin/users');
-  return normalizeUsers(data);
-};
-
-export const getAdminUserDetails = async (id: AdminUser['id']) => {
-  const { data } = await api.get<AdminUser>(`/admin/users/${id}`);
-  return data;
+export const getAdminUserDetails = async (id: AdminUser['id']): Promise<AdminUser> => {
+  void id;
+  return Promise.reject(new Error(
+    'Swagger spec does not expose /admin/users/{id}. Backend must add it before user details can work.',
+  )) as Promise<AdminUser>;
 };
