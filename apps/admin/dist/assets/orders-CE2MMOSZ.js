@@ -1,1 +1,0 @@
-import{a as s}from"./api-BqBeT3Ig.js";const n=r=>{if(Array.isArray(r))return r;if(r&&typeof r=="object"){const t=r;return t.items||t.content||[]}return[]},o=async()=>{const{data:r}=await s.get("/admin/orders");return n(r)},i=async(r,t)=>{const{data:e}=await s.patch(`/admin/orders/${r}/status`,{status:t});return e};export{o as g,i as u};

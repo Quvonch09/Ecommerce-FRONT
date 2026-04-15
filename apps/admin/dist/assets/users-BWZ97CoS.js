@@ -1,0 +1,1 @@
+import{a as t}from"./api-C6nkoUEY.js";const e=r=>{if(Array.isArray(r))return r;if(r&&typeof r=="object"){const s=r;return s.items||s.content||[]}return[]},a=async()=>{const{data:r}=await t.get("/admin/users");return e(r)},i=async r=>{const{data:s}=await t.get(`/admin/users/${r}`);return s};export{i as a,a as g};

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { authStore } from '../store/auth-store';
 
-const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || 'http://5.189.158.5:8085';
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || 'https://qdtu.uz';
 
 // Telegram WebApps require HTTPS. If the frontend is on HTTPS, the backend MUST also be on HTTPS.
 // This check helps identify and potentially fix mixed content issues.

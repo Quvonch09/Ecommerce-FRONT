@@ -2,7 +2,7 @@ import axios from 'axios';
 import { adminAuthStore } from '../store/auth-store';
 
 const baseURL =
-  import.meta.env.VITE_API_BASE_URL?.trim() || 'http://5.189.158.5:8085';
+  import.meta.env.VITE_API_BASE_URL?.trim() || 'https://qdtu.uz';
 
 export const api = axios.create({
   baseURL,
