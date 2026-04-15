@@ -1,41 +1,34 @@
-# Telegram Store Mini App
+# Store Management Frontends
 
-Production-ready React frontend for a Telegram Mini App store management flow.
+This repository now contains two separate React applications:
 
-## Stack
+- `apps/client`: Telegram Mini Web App for customers
+- `apps/admin`: Admin dashboard for store operators
 
-- React + Vite + TypeScript
-- Tailwind CSS
-- React Router
-- TanStack Query
-- Axios
-- Telegram WebApp SDK
-
-## Setup
-
-1. Install dependencies:
+## Run
 
 ```bash
 npm install
+npm run dev:client
+npm run dev:admin
 ```
 
-2. Configure environment:
+## Build
 
 ```bash
-cp .env.example .env
+npm run build
 ```
 
-Set `VITE_API_BASE_URL` to your Spring Boot backend URL.
+## Environment
 
-3. Start development server:
+Both apps use:
 
-```bash
-npm run dev
+```env
+VITE_API_BASE_URL=http://5.189.158.5:8085
 ```
 
-## Telegram Auth Flow
+If backend DTOs or admin REST paths differ from the defaults, update only the
+service files under:
 
-- On app boot the frontend reads `window.Telegram.WebApp.initData`.
-- It sends `POST /auth/telegram` with `{ initData }`.
-- The backend JWT is stored locally and attached to every API request.
-- If Telegram is not available, the app falls back to a mock session for browser development.
+- `apps/client/src/services`
+- `apps/admin/src/services`
