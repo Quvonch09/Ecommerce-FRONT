@@ -24,7 +24,7 @@ npm run build
 Both apps use:
 
 ```env
-VITE_API_BASE_URL=http://5.189.158.5:8085
+VITE_API_BASE_URL=https://qdtu.uz
 ```
 
 If backend DTOs or admin REST paths differ from the defaults, update only the
