@@ -8,10 +8,10 @@ export const LoginPage = () => {
   const { pushToast } = useToast();
 
   const mutation = useMutation({
-    mutationFn: ({ username, password }: { username: string; password: string }) =>
-      loginAdmin(username, password),
+    mutationFn: ({ phone, password }: { phone: string; password: string }) =>
+      loginAdmin(phone, password),
     onSuccess: ({ user }) => {
-      if (user?.role && user.role !== 'ADMIN') {
+      if (user?.role && user.role !== 'ROLE_ADMIN') {
         pushToast({
           title: 'Access denied',
           description: 'This account does not have admin privileges.',
@@ -56,15 +56,16 @@ export const LoginPage = () => {
               event.preventDefault();
               const form = new FormData(event.currentTarget);
               mutation.mutate({
-                username: String(form.get('username') || ''),
+                phone: String(form.get('phone') || ''),
                 password: String(form.get('password') || ''),
               });
             }}
           >
             <label className="block space-y-2">
-              <span className="text-sm font-semibold text-slate-700">Username</span>
+              <span className="text-sm font-semibold text-slate-700">Phone Number</span>
               <input
-                name="username"
+                name="phone"
+                placeholder="+998 90 123 45 67"
                 className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-sky-500"
                 required
               />

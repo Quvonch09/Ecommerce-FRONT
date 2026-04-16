@@ -1,6 +1,6 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CircleAlert, CircleCheckBig, Info } from 'lucide-react';
+import { AlertTriangle, CircleAlert, CircleCheckBig, Info } from 'lucide-react';
 import { toastBus, type ToastPayload } from './toast-bus';
 
 export const ToastContext = createContext({
@@ -45,13 +45,17 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
                   ? 'bg-emerald-600 text-white'
                   : item.tone === 'error'
                     ? 'bg-rose-600 text-white'
-                    : 'bg-white text-slate-900'
+                    : item.tone === 'warning'
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-white text-slate-900'
               }`}
             >
               {item.tone === 'success' ? (
                 <CircleCheckBig className="mt-0.5 h-5 w-5" />
               ) : item.tone === 'error' ? (
                 <CircleAlert className="mt-0.5 h-5 w-5" />
+              ) : item.tone === 'warning' ? (
+                <AlertTriangle className="mt-0.5 h-5 w-5" />
               ) : (
                 <Info className="mt-0.5 h-5 w-5" />
               )}

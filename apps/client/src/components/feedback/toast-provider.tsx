@@ -16,12 +16,14 @@ type ToastEntry = ToastPayload & { id: number };
 const toneStyles: Record<ToastTone, string> = {
   info: 'bg-white text-ink',
   success: 'bg-primary-600 text-white',
+  warning: 'bg-amber-500 text-white',
   error: 'bg-coral text-white',
 };
 
 const toneIcons: Record<ToastTone, React.ReactNode> = {
   info: <Info className="h-5 w-5" />,
   success: <CheckCircle2 className="h-5 w-5" />,
+  warning: <CircleAlert className="h-5 w-5" />,
   error: <CircleAlert className="h-5 w-5" />,
 };
 
