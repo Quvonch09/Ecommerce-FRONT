@@ -1,24 +1,37 @@
 import { api } from './api';
 import type { UserProfile } from '../types';
 
-type ApiEnvelope<T> = {
-  success: boolean;
-  message: string;
-  status: number;
-  data: T;
-  timestamp: string;
-};
-
-type AuthPayload = {
+type AuthResponse = {
   token?: string;
+  accessToken?: string;
+  jwt?: string;
+  user?: UserProfile;
 };
 
 export const authenticateWithTelegram = async (initData: string) => {
-  const { data } = await api.post<ApiEnvelope<AuthPayload>>('/auth/telegram', { initData });
-  const token = data.data?.token;
+  const { data } = await api.post<AuthResponse>('/auth/telegram', { initData });
+  const token = data.token;
 
   if (!token) {
-    throw new Error(data.message || 'Backend did not return a JWT token.');
+    throw new Error('Backend did not return a JWT token.');
+  }
+
+  return {
+    token,
+    user: undefined, // Telegram users usually get user data from initData, but we can call /me later
+  };
+};
+
+export const loginAdmin = async (phoneNumber: string, password: string) => {
+  const { data } = await api.post<AuthResponse>('/auth/admin/login', {
+    phoneNumber,
+    password,
+  });
+
+  const token = data.token;
+
+  if (!token) {
+    throw new Error('Invalid credentials or no token returned.');
   }
 
   return {
@@ -28,6 +41,6 @@ export const authenticateWithTelegram = async (initData: string) => {
 };
 
 export const getMe = async () => {
-  const { data } = await api.get<ApiEnvelope<UserProfile>>('/me');
-  return data.data;
+  const { data } = await api.get<UserProfile>('/me');
+  return data;
 };

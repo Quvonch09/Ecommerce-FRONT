@@ -19,6 +19,9 @@ const DebtPage = lazy(() =>
 const ProfilePage = lazy(() =>
   import('./pages/profile-page').then((module) => ({ default: module.ProfilePage })),
 );
+const LoginPage = lazy(() =>
+  import('./pages/login-page').then((module) => ({ default: module.LoginPage })),
+);
 
 const LazyPage = ({ children }: { children: React.ReactNode }) => (
   <Suspense fallback={<FullScreenLoader label="Loading page..." />}>{children}</Suspense>
@@ -70,6 +73,14 @@ export const router = createBrowserRouter([
         element: (
           <LazyPage>
             <ProfilePage />
+          </LazyPage>
+        ),
+      },
+      {
+        path: 'login',
+        element: (
+          <LazyPage>
+            <LoginPage />
           </LazyPage>
         ),
       },

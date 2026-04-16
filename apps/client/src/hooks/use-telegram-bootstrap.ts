@@ -6,10 +6,13 @@ import { getTelegramInitData, prepareTelegramApp } from '../utils/telegram';
 import { useToast } from '../components/feedback/use-toast';
 import type { UserProfile } from '../types';
 import { useAuth } from './use-auth';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const browserFallbackInitData = 'browser-dev-session';
 
 export const useTelegramBootstrap = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { pushToast } = useToast();
   const { token } = useAuth();
   const [telegramUnavailable, setTelegramUnavailable] = useState(false);
@@ -46,11 +49,9 @@ export const useTelegramBootstrap = () => {
     const initData = getTelegramInitData();
     if (!initData && !import.meta.env.DEV) {
       setTelegramUnavailable(true);
-      pushToast({
-        title: 'Telegram session missing',
-        description: 'Open this app inside Telegram Mini App to continue.',
-        tone: 'error',
-      });
+      if (location.pathname !== '/login') {
+        navigate('/login');
+      }
       return;
     }
 
@@ -58,7 +59,7 @@ export const useTelegramBootstrap = () => {
     const payload = initData || browserFallbackInitData;
     hasAttemptedAuthRef.current = true;
     authMutation.mutate(payload);
-  }, [authMutation.isPending, authMutation.mutate, pushToast, token]);
+  }, [authMutation.isPending, authMutation.mutate, pushToast, token, navigate, location.pathname]);
 
   const meQuery = useQuery<UserProfile>({
     queryKey: ['me'],
