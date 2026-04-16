@@ -1,1 +1,0 @@
-import{a as t}from"./api-DtBrl9Xa.js";const o=async()=>Promise.reject(new Error("Swagger spec does not expose a list-all-orders endpoint. Backend must add one before the admin orders table can work.")),n=async(r,a)=>{const{data:e}=await t.put(`/orders/${r}/status`,{status:a});return e.data??e};export{o as g,n as u};

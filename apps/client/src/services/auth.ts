@@ -10,7 +10,7 @@ type AuthResponse = {
 
 export const authenticateWithTelegram = async (initData: string) => {
   const { data } = await api.post<AuthResponse>('/auth/telegram', { initData });
-  const token = data.token;
+  const token = data.token || data.accessToken || data.jwt;
 
   if (!token) {
     throw new Error('Backend did not return a JWT token.');
