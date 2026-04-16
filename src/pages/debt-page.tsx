@@ -16,7 +16,13 @@ export const DebtPage = () => {
   const { data: debt, isLoading, isError, error, refetch } = useDebt();
 
   const payMutation = useMutation({
-    mutationFn: (amount: number) => createPayment(amount),
+    mutationFn: (amount: number) => {
+      const openDebt = debt?.items?.find((d) => d.status === 'OPEN') || debt?.items?.[0];
+      if (!openDebt) {
+        throw new Error('No open debt found to pay.');
+      }
+      return createPayment({ debtId: openDebt.id, amount });
+    },
     onSuccess: async () => {
       notifyTelegram('success');
       pushToast({

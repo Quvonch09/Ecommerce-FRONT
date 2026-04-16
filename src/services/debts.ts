@@ -1,14 +1,24 @@
 import { api } from './api';
-import type { Debt } from '../types';
+import type { Debt, DebtResponse } from '../types';
 
 export const getMyDebt = async () => {
-  const { data } = await api.get('/debts/my');
-  const debt = (data?.data ?? data) as Partial<Debt>;
+  const { data } = await api.get<DebtResponse[]>('/debts/my');
+  const items = Array.isArray(data) ? data : [];
+
+  const summary = items.reduce(
+    (acc, item) => {
+      acc.totalDebt += item.totalAmount || 0;
+      acc.totalPaid += item.paidAmount || 0;
+      return acc;
+    },
+    { totalDebt: 0, totalPaid: 0 },
+  );
 
   return {
-    totalDebt: Number(debt.totalDebt ?? 0),
-    totalPaid: Number(debt.totalPaid ?? 0),
-    remainingDebt: Number(debt.remainingDebt ?? 0),
-    currency: debt.currency ?? 'UZS',
+    totalDebt: summary.totalDebt,
+    totalPaid: summary.totalPaid,
+    remainingDebt: Math.max(0, summary.totalDebt - summary.totalPaid),
+    currency: 'UZS',
+    items,
   } satisfies Debt;
 };

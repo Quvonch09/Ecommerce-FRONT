@@ -25,7 +25,21 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Automatically unwrap the standard ApiResponse wrapper
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'success' in response.data &&
+      'data' in response.data
+    ) {
+      return {
+        ...response,
+        data: response.data.data,
+      };
+    }
+    return response;
+  },
   (error) => {
     console.error('API call failed:', {
       message: error.message,

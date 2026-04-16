@@ -13,7 +13,7 @@ const profileRows = (
     icon: UserRound,
     label: 'Full name',
     value:
-      me?.fullName ||
+      (me?.firstName || me?.lastName) ? [me.firstName, me.lastName].filter(Boolean).join(' ') :
       [telegramUser?.first_name, telegramUser?.last_name].filter(Boolean).join(' ') ||
       'Not provided',
   },
@@ -21,11 +21,6 @@ const profileRows = (
     icon: AtSign,
     label: 'Username',
     value: me?.username || telegramUser?.username || 'Not provided',
-  },
-  {
-    icon: Phone,
-    label: 'Phone',
-    value: me?.phone || 'Not provided',
   },
   {
     icon: BadgeCheck,
@@ -65,7 +60,7 @@ export const ProfilePage = () => {
             </div>
             <div>
               <h2 className="text-xl font-extrabold">
-                {me?.fullName || telegramUser?.first_name || 'Telegram User'}
+                {(me?.firstName || me?.lastName) ? [me.firstName, me.lastName].filter(Boolean).join(' ') : telegramUser?.first_name || 'Telegram User'}
               </h2>
               <p className="mt-1 text-sm text-white/75">
                 Telegram ID: {telegramUser?.id || me?.telegramId || 'Unavailable'}

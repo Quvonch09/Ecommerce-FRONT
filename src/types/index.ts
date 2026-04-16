@@ -8,12 +8,13 @@ export type TelegramUser = {
 
 export type UserProfile = {
   id: number | string;
-  fullName?: string;
-  phone?: string;
+  firstName?: string;
+  lastName?: string;
   username?: string;
   telegramId?: number;
-  role?: string;
+  role?: 'ROLE_ADMIN' | 'ROLE_CLIENT' | string;
   balance?: number;
+  createdAt?: string;
 };
 
 export type Product = {
@@ -50,9 +51,40 @@ export type Order = {
   items?: OrderItem[];
 };
 
+export type OrderResponse = {
+  id: number | string;
+  userId: number | string;
+  totalAmount: number;
+  status: 'NEW' | 'CONFIRMED' | 'DELIVERED' | 'CANCELLED' | string;
+  createdAt: string;
+  items: OrderItem[];
+};
+
+export type DebtResponse = {
+  id: number | string;
+  userId: number | string;
+  totalAmount: number;
+  paidAmount: number;
+  status: 'OPEN' | 'CLOSED' | string;
+  createdAt: string;
+};
+
 export type Debt = {
   totalDebt: number;
   totalPaid: number;
   remainingDebt: number;
   currency?: string;
+  items?: DebtResponse[];
+};
+
+export type PaymentRequest = {
+  debtId: number | string;
+  amount: number;
+};
+
+export type PaymentResponse = {
+  id: number | string;
+  debtId: number | string;
+  amount: number;
+  createdAt: string;
 };
