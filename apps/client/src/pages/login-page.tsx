@@ -4,7 +4,7 @@ import { Lock, Phone, MessageSquareShare } from 'lucide-react';
 import { useToast } from '../components/feedback/use-toast';
 import { authenticateWithTelegram, loginAdmin } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramInitData } from '../utils/telegram';
+import { getTelegramInitData, getTelegramUser } from '../utils/telegram';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export const LoginPage = () => {
   });
 
   const tgMutation = useMutation({
-    mutationFn: (initData: string) => authenticateWithTelegram(initData),
+    mutationFn: (payload: { initData: string; telegramId?: number }) => authenticateWithTelegram(payload),
     onSuccess: ({ token }) => {
       authStore.setToken(token);
       pushToast({
@@ -65,6 +65,8 @@ export const LoginPage = () => {
 
   const handleTgAuth = () => {
     const initData = getTelegramInitData();
+    const telegramUser = getTelegramUser();
+    
     if (!initData) {
       pushToast({
         title: 'Context missing',
@@ -73,7 +75,10 @@ export const LoginPage = () => {
       });
       return;
     }
-    tgMutation.mutate(initData);
+    tgMutation.mutate({ 
+      initData, 
+      telegramId: telegramUser?.id 
+    });
   };
 
   return (

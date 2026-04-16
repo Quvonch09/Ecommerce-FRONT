@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { authenticateWithTelegram, getMe } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramInitData, prepareTelegramApp } from '../utils/telegram';
+import { getTelegramInitData, getTelegramUser, prepareTelegramApp } from '../utils/telegram';
 import { useToast } from '../components/feedback/use-toast';
 import type { UserProfile } from '../types';
 import { useAuth } from './use-auth';
@@ -47,6 +47,8 @@ export const useTelegramBootstrap = () => {
     }
 
     const initData = getTelegramInitData();
+    const telegramUser = getTelegramUser();
+
     if (!initData && !import.meta.env.DEV) {
       setTelegramUnavailable(true);
       if (location.pathname !== '/login') {
@@ -58,7 +60,10 @@ export const useTelegramBootstrap = () => {
     setTelegramUnavailable(false);
     const payload = initData || browserFallbackInitData;
     hasAttemptedAuthRef.current = true;
-    authMutation.mutate(payload);
+    authMutation.mutate({ 
+      initData: payload, 
+      telegramId: telegramUser?.id 
+    });
   }, [authMutation.isPending, authMutation.mutate, pushToast, token, navigate, location.pathname]);
 
   const meQuery = useQuery<UserProfile>({
