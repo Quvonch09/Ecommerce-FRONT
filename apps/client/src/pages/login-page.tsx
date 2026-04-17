@@ -4,7 +4,7 @@ import { Lock, Phone, MessageSquareShare } from 'lucide-react';
 import { useToast } from '../components/feedback/use-toast';
 import { authenticateWithTelegram, loginAdmin } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramInitData, getTelegramUser } from '../utils/telegram';
+import { getTelegramUser } from '../utils/telegram';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export const LoginPage = () => {
   });
 
   const tgMutation = useMutation({
-    mutationFn: (payload: {telegramId?: number }) => authenticateWithTelegram(payload),
+    mutationFn: (telegramId: number) => authenticateWithTelegram(telegramId),
     onSuccess: ({ token }) => {
       authStore.setToken(token);
       pushToast({
@@ -47,7 +47,7 @@ export const LoginPage = () => {
       pushToast({
         title: 'Telegram Auth Failed',
         description: is403 
-          ? 'Backend rejected your Telegram account (403). Check BOT_TOKEN on server.'
+          ? 'Backend rejected your Telegram ID (403).'
           : (error instanceof Error ? error.message : 'Backend rejected Telegram data.'),
         tone: 'error',
       });
@@ -64,20 +64,18 @@ export const LoginPage = () => {
   };
 
   const handleTgAuth = () => {
-    const initData = getTelegramInitData();
     const telegramUser = getTelegramUser();
     
-    if (!initData) {
+    if (!telegramUser?.id) {
       pushToast({
-        title: 'Context missing',
-        description: 'No Telegram initData found. Are you in a browser?',
+        title: 'ID missing',
+        description: 'No Telegram ID found. Are you in a browser?',
         tone: 'warning',
       });
       return;
     }
-    tgMutation.mutate({ 
-      telegramId: telegramUser?.id 
-    });
+    
+    tgMutation.mutate(telegramUser.id);
   };
 
   return (

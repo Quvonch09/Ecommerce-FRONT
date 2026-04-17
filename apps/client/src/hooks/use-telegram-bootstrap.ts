@@ -2,13 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { authenticateWithTelegram, getMe } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramInitData, getTelegramUser, prepareTelegramApp } from '../utils/telegram';
+import { getTelegramUser, prepareTelegramApp } from '../utils/telegram';
 import { useToast } from '../components/feedback/use-toast';
 import type { UserProfile } from '../types';
 import { useAuth } from './use-auth';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-const browserFallbackInitData = 'browser-dev-session';
 
 export const useTelegramBootstrap = () => {
   const navigate = useNavigate();
@@ -46,10 +44,9 @@ export const useTelegramBootstrap = () => {
       return;
     }
 
-    const initData = getTelegramInitData();
     const telegramUser = getTelegramUser();
-
-    if (!initData && !import.meta.env.DEV) {
+    
+    if (!telegramUser?.id && !import.meta.env.DEV) {
       setTelegramUnavailable(true);
       if (location.pathname !== '/login') {
         navigate('/login');
@@ -58,19 +55,12 @@ export const useTelegramBootstrap = () => {
     }
 
     setTelegramUnavailable(false);
-    const payload = initData || browserFallbackInitData;
+    const userId = telegramUser?.id || 123456789; // Mock for dev
     hasAttemptedAuthRef.current = true;
     
-    console.debug('[Bootstrap] Initiating authentication with payload:', {
-      hasInitData: !!initData,
-      telegramId: telegramUser?.id,
-      isDev: import.meta.env.DEV
-    });
+    console.debug('[Bootstrap] Authenticating with ONLY telegramId:', userId);
 
-    authMutation.mutate({ 
-      initData: payload, 
-      telegramId: telegramUser?.id 
-    });
+    authMutation.mutate(userId);
   }, [authMutation.isPending, authMutation.mutate, pushToast, token, navigate, location.pathname]);
 
   const meQuery = useQuery<UserProfile>({
