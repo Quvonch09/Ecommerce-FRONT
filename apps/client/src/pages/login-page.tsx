@@ -4,7 +4,7 @@ import { Lock, Phone, MessageSquareShare } from 'lucide-react';
 import { useToast } from '../components/feedback/use-toast';
 import { authenticateWithTelegram, loginAdmin } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramUser } from '../utils/telegram';
+import { getTelegramInitData, getTelegramUser } from '../utils/telegram';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export const LoginPage = () => {
   });
 
   const tgMutation = useMutation({
-    mutationFn: (telegramId: number) => authenticateWithTelegram(telegramId),
+    mutationFn: (payload: { telegramId: number; initData: string }) => authenticateWithTelegram(payload),
     onSuccess: ({ token }) => {
       authStore.setToken(token);
       pushToast({
@@ -65,6 +65,7 @@ export const LoginPage = () => {
 
   const handleTgAuth = () => {
     const telegramUser = getTelegramUser();
+    const initData = getTelegramInitData();
     
     if (!telegramUser?.id) {
       pushToast({
@@ -75,7 +76,10 @@ export const LoginPage = () => {
       return;
     }
     
-    tgMutation.mutate(telegramUser.id);
+    tgMutation.mutate({
+      telegramId: telegramUser.id,
+      initData: initData || 'tg-browser-auth'
+    });
   };
 
   return (
