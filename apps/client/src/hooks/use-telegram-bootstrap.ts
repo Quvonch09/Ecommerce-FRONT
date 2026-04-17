@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { authenticateWithTelegram, getMe } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramInitData, getTelegramUser, prepareTelegramApp } from '../utils/telegram';
+import { getTelegramUser, prepareTelegramApp } from '../utils/telegram';
 import { useToast } from '../components/feedback/use-toast';
 import type { UserProfile } from '../types';
 import { useAuth } from './use-auth';
@@ -45,7 +45,6 @@ export const useTelegramBootstrap = () => {
     }
 
     const telegramUser = getTelegramUser();
-    const initData = getTelegramInitData();
     
     if (!telegramUser?.id && !import.meta.env.DEV) {
       setTelegramUnavailable(true);
@@ -59,12 +58,9 @@ export const useTelegramBootstrap = () => {
     const userId = telegramUser?.id || 123456789; // Mock for dev
     hasAttemptedAuthRef.current = true;
     
-    console.debug('[Bootstrap] Authenticating with telegramId and initData');
+    console.debug('[Bootstrap] Authenticating with ONLY telegramId:', userId);
 
-    authMutation.mutate({
-      telegramId: userId,
-      initData: initData || 'tg-web-app-session'
-    });
+    authMutation.mutate(userId);
   }, [authMutation.isPending, authMutation.mutate, pushToast, token, navigate, location.pathname]);
 
   const meQuery = useQuery<UserProfile>({
