@@ -32,7 +32,7 @@ export const LoginPage = () => {
   });
 
   const tgMutation = useMutation({
-    mutationFn: (payload: { initData: string; telegramId?: number }) => authenticateWithTelegram(payload),
+    mutationFn: (payload: {telegramId?: number }) => authenticateWithTelegram(payload),
     onSuccess: ({ token }) => {
       authStore.setToken(token);
       pushToast({
@@ -76,7 +76,6 @@ export const LoginPage = () => {
       return;
     }
     tgMutation.mutate({ 
-      initData, 
       telegramId: telegramUser?.id 
     });
   };
