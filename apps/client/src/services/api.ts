@@ -18,16 +18,20 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = authStore.getSnapshot().token;
+
   if (token) {
+    // Standard Bearer token
     config.headers.Authorization = `Bearer ${token}`;
+    console.debug(`[API Request] Token attached to ${config.url}. (Bearer ${token.substring(0, 10)}...)`);
+  } else {
+    console.warn(`[API Request] No token found for ${config.url}. Protected endpoints will fail with 403.`);
   }
+
   return config;
 });
 
 api.interceptors.response.use(
   (response) => {
-    console.debug('Raw API Response:', response.data);
-
     // Automatically unwrap the standard ApiResponse wrapper
     if (
       response.data &&
@@ -46,18 +50,20 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const errorData = error.response?.data;
 
-    console.error('API call failed:', {
-      url: error.config?.url,
-      status,
-      message: error.message,
-      data: errorData,
-    });
-
+    // Enhanced logging for 403 Forbidden
     if (status === 403) {
-      console.warn('Access Forbidden (403). Possible causes: Invalid Telegram initData, expired token, or CORS issues.');
+      console.error('[API 403 Forbidden] Access denied. This usually means:', {
+        cause1: 'Authorization header is missing or malformed',
+        cause2: 'JWT token is invalid, expired, or rejected by backend',
+        cause3: 'Endpoint requires specific role (e.g. ROLE_ADMIN)',
+        url: error.config?.url,
+        requestHeaders: error.config?.headers,
+        responseDetails: errorData,
+      });
     }
 
     if (status === 401) {
+      console.warn('[API 401 Unauthorized] Session expired. Clearing token.');
       authStore.clear();
     }
 

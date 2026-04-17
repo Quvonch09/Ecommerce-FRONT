@@ -60,6 +60,13 @@ export const useTelegramBootstrap = () => {
     setTelegramUnavailable(false);
     const payload = initData || browserFallbackInitData;
     hasAttemptedAuthRef.current = true;
+    
+    console.debug('[Bootstrap] Initiating authentication with payload:', {
+      hasInitData: !!initData,
+      telegramId: telegramUser?.id,
+      isDev: import.meta.env.DEV
+    });
+
     authMutation.mutate({ 
       initData: payload, 
       telegramId: telegramUser?.id 

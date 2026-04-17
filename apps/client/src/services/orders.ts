@@ -1,13 +1,9 @@
 import { api } from './api';
 import type { CartItem, Order } from '../types';
 
-type ApiEnvelope<T> = {
-  data: T;
-};
-
 export const getMyOrders = async () => {
-  const { data } = await api.get<ApiEnvelope<Order[]>>('/orders/my');
-  return data.data ?? [];
+  const { data } = await api.get<Order[]>('/orders/my');
+  return Array.isArray(data) ? data : [];
 };
 
 export const createOrder = async (cartItems: CartItem[]) => {
@@ -19,6 +15,6 @@ export const createOrder = async (cartItems: CartItem[]) => {
     createDebt: true,
   };
 
-  const { data } = await api.post<ApiEnvelope<Order>>('/orders', payload);
-  return data.data;
+  const { data } = await api.post<Order>('/orders', payload);
+  return data;
 };

@@ -1,10 +1,6 @@
 import { api } from './api';
 import type { Debt } from '../types';
 
-type ApiEnvelope<T> = {
-  data: T;
-};
-
 type DebtItem = {
   id: number;
   totalAmount: number;
@@ -13,11 +9,11 @@ type DebtItem = {
 };
 
 export const getMyDebt = async () => {
-  const { data } = await api.get<ApiEnvelope<DebtItem[]>>('/debts/my');
-  const debts = data.data ?? [];
+  const { data } = await api.get<DebtItem[]>('/debts/my');
+  const debts = Array.isArray(data) ? data : [];
 
-  const totalDebt = debts.reduce((sum, debt) => sum + Number(debt.totalAmount ?? 0), 0);
-  const totalPaid = debts.reduce((sum, debt) => sum + Number(debt.paidAmount ?? 0), 0);
+  const totalDebt = debts.reduce((sum, item) => sum + Number(item.totalAmount ?? 0), 0);
+  const totalPaid = debts.reduce((sum, item) => sum + Number(item.paidAmount ?? 0), 0);
   const remainingDebt = Math.max(totalDebt - totalPaid, 0);
 
   return {
