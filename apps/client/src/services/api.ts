@@ -12,8 +12,12 @@ const configuredBaseUrl = (typeof window !== 'undefined' && window.location.prot
 console.log('API Base URL:', configuredBaseUrl);
 
 export const api = axios.create({
-  baseURL: configuredBaseUrl,
+  baseURL: configuredBaseUrl.endsWith('/') ? configuredBaseUrl.slice(0, -1) : configuredBaseUrl,
   timeout: 20_000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
 });
 
 api.interceptors.request.use((config) => {

@@ -55,12 +55,17 @@ export const useTelegramBootstrap = () => {
     }
 
     setTelegramUnavailable(false);
-    const userId = telegramUser?.id || 123456789; // Mock for dev
-    hasAttemptedAuthRef.current = true;
+    const userId = telegramUser?.id;
     
-    console.debug('[Bootstrap] Authenticating with ONLY telegramId:', userId);
-
-    authMutation.mutate(userId);
+    // Dev muhitida yoki Telegram ID borligida ishlaydi
+    if (userId || import.meta.env.DEV) {
+      const finalId = userId || 123456789;
+      hasAttemptedAuthRef.current = true;
+      console.debug('[Bootstrap] Authenticating with Number ID:', finalId);
+      authMutation.mutate(Number(finalId));
+    } else {
+      console.warn('[Bootstrap] No Telegram ID found, skipping auto-auth');
+    }
   }, [authMutation.isPending, authMutation.mutate, pushToast, token, navigate, location.pathname]);
 
   const meQuery = useQuery<UserProfile>({
