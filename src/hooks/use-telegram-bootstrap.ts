@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { authenticateWithTelegram, getMe } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramInitData, prepareTelegramApp } from '../utils/telegram';
+import { getTelegramUser, prepareTelegramApp } from '../utils/telegram';
 import { useToast } from '../components/feedback/use-toast';
 import type { UserProfile } from '../types';
 import { useAuth } from './use-auth';
-
-const browserFallbackInitData = 'browser-dev-session';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const useTelegramBootstrap = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { pushToast } = useToast();
   const { token } = useAuth();
   const [telegramUnavailable, setTelegramUnavailable] = useState(false);
@@ -43,22 +44,23 @@ export const useTelegramBootstrap = () => {
       return;
     }
 
-    const initData = getTelegramInitData();
-    if (!initData && !import.meta.env.DEV) {
+    const telegramUser = getTelegramUser();
+    if (!telegramUser?.id && !import.meta.env.DEV) {
       setTelegramUnavailable(true);
-      pushToast({
-        title: 'Telegram session missing',
-        description: 'Open this app inside Telegram Mini App to continue.',
-        tone: 'error',
-      });
+      if (location.pathname !== '/login') {
+        navigate('/login');
+      }
       return;
     }
 
     setTelegramUnavailable(false);
-    const payload = initData || browserFallbackInitData;
-    hasAttemptedAuthRef.current = true;
-    authMutation.mutate(payload);
-  }, [authMutation.isPending, authMutation.mutate, pushToast, token]);
+    const telegramId = telegramUser?.id;
+
+    if (telegramId || import.meta.env.DEV) {
+      hasAttemptedAuthRef.current = true;
+      authMutation.mutate(Number(telegramId || 123456789));
+    }
+  }, [authMutation.isPending, authMutation.mutate, location.pathname, navigate, pushToast, token]);
 
   const meQuery = useQuery<UserProfile>({
     queryKey: ['me'],

@@ -8,8 +8,8 @@ type AuthResponse = {
   user?: UserProfile;
 };
 
-export const authenticateWithTelegram = async (initData: string) => {
-  const { data } = await api.post<AuthResponse>('/auth/telegram', { initData });
+export const authenticateWithTelegram = async (telegramId: number) => {
+  const { data } = await api.post<AuthResponse>('/auth/telegram', { telegramId });
   const token = data.token || data.accessToken || data.jwt;
 
   if (!token) {

@@ -5,8 +5,6 @@ export const getTelegramWebApp = () => window.Telegram?.WebApp;
 export const getTelegramUser = (): TelegramUser | null =>
   getTelegramWebApp()?.initDataUnsafe?.user ?? null;
 
-export const getTelegramInitData = () => getTelegramWebApp()?.initData ?? '';
-
 export const prepareTelegramApp = () => {
   const webApp = getTelegramWebApp();
   if (!webApp) {

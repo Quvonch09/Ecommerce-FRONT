@@ -9,10 +9,7 @@ type AuthResponse = {
 };
 
 export const authenticateWithTelegram = async (telegramId: number) => {
-  const payload = { telegramId: Number(telegramId) };
-  console.debug('[Auth Service] Yuborilayotgan JSON:', JSON.stringify(payload));
-  
-  const { data } = await api.post<AuthResponse>('/auth/telegram', payload);
+  const { data } = await api.post<AuthResponse>('/auth/telegram', { telegramId });
   const token = data.token || data.accessToken || data.jwt;
 
   if (!token) {
@@ -21,7 +18,7 @@ export const authenticateWithTelegram = async (telegramId: number) => {
 
   return {
     token,
-    user: undefined, 
+    user: undefined,
   };
 };
 
