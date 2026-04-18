@@ -1,1 +1,0 @@
-const s=async()=>Promise.reject(new Error("Swagger spec does not expose /admin/users. Backend must add admin user-management endpoints before this page can work.")),r=async e=>Promise.reject(new Error("Swagger spec does not expose /admin/users/{id}. Backend must add it before user details can work."));export{r as a,s as g};

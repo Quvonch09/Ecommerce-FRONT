@@ -1,0 +1,1 @@
+import{e as r}from"./index-BcG0qQjY.js";const o=async()=>{const{data:a}=await r.get("/admin/orders");return a.map(t=>({...t,totalAmount:Number(t.totalAmount??0)}))},e=async(a,t)=>{const{data:s}=await r.put(`/orders/${a}/status`,{status:t});return s.data??s};export{o as g,e as u};
