@@ -2,6 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/shared/use-toast';
 import { loginAdmin } from '../services/auth';
+import { adminAuthStore } from '../store/auth-store';
+import { getErrorMessage } from '../utils/error';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -11,7 +13,8 @@ export const LoginPage = () => {
     mutationFn: ({ phone, password }: { phone: string; password: string }) =>
       loginAdmin(phone, password),
     onSuccess: ({ user }) => {
-      if (user?.role && user.role !== 'ROLE_ADMIN') {
+      if (user?.role && user.role !== 'ROLE_ADMIN' && user.role !== 'ADMIN') {
+        adminAuthStore.clear();
         pushToast({
           title: 'Access denied',
           description: 'This account does not have admin privileges.',
@@ -25,6 +28,13 @@ export const LoginPage = () => {
         tone: 'success',
       });
       navigate('/dashboard');
+    },
+    onError: (error) => {
+      pushToast({
+        title: 'Authentication failed',
+        description: getErrorMessage(error, 'Invalid admin credentials.'),
+        tone: 'error',
+      });
     },
   });
 
@@ -47,7 +57,7 @@ export const LoginPage = () => {
         <div className="p-10">
           <h2 className="text-3xl font-extrabold text-slate-900">Admin sign in</h2>
           <p className="mt-2 text-sm text-slate-500">
-            Only users with the <span className="font-bold">ADMIN</span> role can enter.
+            Only users with the <span className="font-bold">ROLE_ADMIN</span> role can enter.
           </p>
 
           <form

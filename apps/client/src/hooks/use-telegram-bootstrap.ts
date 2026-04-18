@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { authenticateWithTelegram, getMe } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramUser, prepareTelegramApp } from '../utils/telegram';
+import { getTelegramId, prepareTelegramApp } from '../utils/telegram';
 import { useToast } from '../components/feedback/use-toast';
 import type { UserProfile } from '../types';
 import { useAuth } from './use-auth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getErrorMessage } from '../utils/error';
 
 export const useTelegramBootstrap = () => {
   const navigate = useNavigate();
@@ -26,8 +27,7 @@ export const useTelegramBootstrap = () => {
       hasAttemptedAuthRef.current = true;
       pushToast({
         title: 'Authentication failed',
-        description:
-          error instanceof Error ? error.message : 'Unable to sign in through Telegram.',
+        description: getErrorMessage(error, 'Unable to sign in through Telegram.'),
         tone: 'error',
       });
     },
@@ -44,9 +44,9 @@ export const useTelegramBootstrap = () => {
       return;
     }
 
-    const telegramUser = getTelegramUser();
-    
-    if (!telegramUser?.id && !import.meta.env.DEV) {
+    const telegramId = getTelegramId();
+
+    if (!telegramId && !import.meta.env.DEV) {
       setTelegramUnavailable(true);
       if (location.pathname !== '/login') {
         navigate('/login');
@@ -55,10 +55,8 @@ export const useTelegramBootstrap = () => {
     }
 
     setTelegramUnavailable(false);
-    const userId = telegramUser?.id;
-
-    if (userId || import.meta.env.DEV) {
-      const finalId = userId || 123456789;
+    if (telegramId || import.meta.env.DEV) {
+      const finalId = telegramId || 123456789;
       hasAttemptedAuthRef.current = true;
       authMutation.mutate(Number(finalId));
     }

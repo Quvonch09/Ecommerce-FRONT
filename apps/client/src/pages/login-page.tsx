@@ -4,7 +4,8 @@ import { Lock, Phone, MessageSquareShare } from 'lucide-react';
 import { useToast } from '../components/feedback/use-toast';
 import { authenticateWithTelegram, loginAdmin } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramUser } from '../utils/telegram';
+import { getTelegramId } from '../utils/telegram';
+import { getErrorMessage } from '../utils/error';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export const LoginPage = () => {
     onError: (error) => {
       pushToast({
         title: 'Authentication failed',
-        description: error instanceof Error ? error.message : 'Invalid credentials.',
+        description: getErrorMessage(error, 'Invalid credentials.'),
         tone: 'error',
       });
     },
@@ -43,12 +44,9 @@ export const LoginPage = () => {
       navigate('/');
     },
     onError: (error) => {
-      const is403 = (error as any)?.response?.status === 403;
       pushToast({
         title: 'Telegram Auth Failed',
-        description: is403 
-          ? 'Backend rejected your Telegram ID (403).'
-          : (error instanceof Error ? error.message : 'Backend rejected Telegram data.'),
+        description: getErrorMessage(error, 'Backend rejected Telegram data.'),
         tone: 'error',
       });
     },
@@ -64,18 +62,18 @@ export const LoginPage = () => {
   };
 
   const handleTgAuth = () => {
-    const telegramUser = getTelegramUser();
-    
-    if (!telegramUser?.id) {
+    const telegramId = getTelegramId();
+
+    if (!telegramId) {
       pushToast({
         title: 'ID missing',
-        description: 'No Telegram ID found. Are you in a browser?',
+        description: 'Telegram ID topilmadi. Mini App Telegram ichida ochilganini tekshiring.',
         tone: 'warning',
       });
       return;
     }
-    
-    tgMutation.mutate(telegramUser.id);
+
+    tgMutation.mutate(telegramId);
   };
 
   return (

@@ -1,7 +1,9 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAdminAuth } from './hooks/use-admin-auth';
 import { AdminLayout } from './layouts/admin-layout';
+import { getAdminMe } from './services/auth';
 
 const LoginPage = lazy(() =>
   import('./pages/login-page').then((module) => ({ default: module.LoginPage })),
@@ -27,11 +29,28 @@ const Loader = () => <div className="p-10 text-sm text-slate-500">Loading...</di
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { token, user } = useAdminAuth();
 
+  const meQuery = useQuery({
+    queryKey: ['admin-me'],
+    queryFn: getAdminMe,
+    enabled: Boolean(token) && !user,
+    retry: false,
+  });
+
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
-  if (user?.role && user.role !== 'ADMIN') {
+  if (meQuery.isLoading) {
+    return <Loader />;
+  }
+
+  const resolvedUser = user ?? meQuery.data;
+
+  if (meQuery.isError || !resolvedUser) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (resolvedUser?.role && resolvedUser.role !== 'ROLE_ADMIN' && resolvedUser.role !== 'ADMIN') {
     return <Navigate to="/login" replace />;
   }
 
