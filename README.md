@@ -1,34 +1,46 @@
-# Store Management Frontends
+# Telegram Mini App
 
-This repository now contains two separate React applications:
+Single Next.js Telegram WebApp with clean server boundaries:
 
-- `apps/client`: Telegram Mini Web App for customers
-- `apps/admin`: Admin dashboard for store operators
+- `app/api/*`: API entrypoints exposed to the Mini App
+- `features/*/controllers`: request orchestration
+- `features/*/services`: backend integration
+- `lib/security/*`: JWT cookie handling
+
+## Flow
+
+1. Bot sends only a `web_app` button that opens the Mini App.
+2. Mini App reads `window.Telegram.WebApp.initData`.
+3. `POST /api/auth/telegram` forwards `initData` to the backend and stores JWT in an HTTP-only cookie.
+4. `GET /api/user/me` resolves the current user.
+5. UI renders `ADMIN` or `USER` panel from the returned role.
 
 ## Run
 
 ```bash
 npm install
-npm run dev:client
-npm run dev:admin
-```
-
-## Build
-
-```bash
-npm run build
+npm run dev
 ```
 
 ## Environment
 
-Both apps use:
-
 ```env
-VITE_API_BASE_URL=https://qdtu.uz
+BACKEND_API_BASE_URL=https://qdtu.uz
+BACKEND_TELEGRAM_AUTH_PATH=/auth/telegram
+BACKEND_ME_PATH=/user/me
 ```
 
-If backend DTOs or admin REST paths differ from the defaults, update only the
-service files under:
+If your backend exposes a different `me` route, change only `BACKEND_ME_PATH`.
 
-- `apps/client/src/services`
-- `apps/admin/src/services`
+## Bot
+
+The bot should stay minimal and only launch the Mini App:
+
+```json
+{
+  "text": "Open App",
+  "web_app": {
+    "url": "https://your-mini-app.com"
+  }
+}
+```
