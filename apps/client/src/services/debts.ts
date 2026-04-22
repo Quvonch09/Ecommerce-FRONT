@@ -9,7 +9,7 @@ type DebtItem = {
 };
 
 export const getMyDebt = async () => {
-  const { data } = await api.get<DebtItem[]>('/debts/my');
+  const { data } = await api.get<DebtItem[]>('app/debts/my');
   const debts = Array.isArray(data) ? data : [];
 
   const totalDebt = debts.reduce((sum, item) => sum + Number(item.totalAmount ?? 0), 0);

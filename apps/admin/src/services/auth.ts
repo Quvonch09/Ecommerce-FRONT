@@ -4,7 +4,7 @@ import { api } from './api';
 
 export const loginAdmin = async (phoneNumber: string, password: string) => {
   const { data } = await api.post<{ token?: string; accessToken?: string; jwt?: string; user?: AdminUser }>(
-    '/auth/admin/login',
+    'auth/admin/login',
     {
     phoneNumber,
     password,
@@ -32,7 +32,7 @@ export const loginAdmin = async (phoneNumber: string, password: string) => {
 };
 
 export const getAdminMe = async () => {
-  const { data } = await api.get<AdminUser>('/me');
+  const { data } = await api.get<AdminUser>('user/me');
   if (data) {
     adminAuthStore.setSession(adminAuthStore.getSnapshot().token || '', data);
   }

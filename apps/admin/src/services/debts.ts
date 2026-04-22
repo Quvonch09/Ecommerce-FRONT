@@ -14,6 +14,6 @@ export const getDebtRecords = async (): Promise<DebtRecord[]> => {
 };
 
 export const markPayment = async (userId: DebtRecord['userId'], amount: number) => {
-  const { data } = await api.post('/payments', { userId, amount });
+  const { data } = await api.post('app/payments', { userId, amount });
   return data;
 };

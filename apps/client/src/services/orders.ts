@@ -2,7 +2,7 @@ import { api } from './api';
 import type { CartItem, Order } from '../types';
 
 export const getMyOrders = async () => {
-  const { data } = await api.get<Order[]>('/orders/my');
+  const { data } = await api.get<Order[]>('app/orders/my');
   return Array.isArray(data) ? data : [];
 };
 
@@ -15,6 +15,6 @@ export const createOrder = async (cartItems: CartItem[]) => {
     createDebt: true,
   };
 
-  const { data } = await api.post<Order>('/orders', payload);
+  const { data } = await api.post<Order>('app/orders', payload);
   return data;
 };

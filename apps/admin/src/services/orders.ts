@@ -2,7 +2,7 @@ import type { AdminOrder, OrderStatus } from '../types';
 import { api } from './api';
 
 export const getAdminOrders = async (): Promise<AdminOrder[]> => {
-  const { data } = await api.get<AdminOrder[]>('/admin/orders');
+  const { data } = await api.get<AdminOrder[]>('admin/orders');
   return data.map((order) => ({
     ...order,
     totalAmount: Number(order.totalAmount ?? 0),

@@ -2,17 +2,20 @@ import axios from 'axios';
 import { authStore } from '../store/auth-store';
 
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || 'https://qdtu.uz';
+const apiBaseUrl = rawBaseUrl.endsWith('/api/') 
+  ? rawBaseUrl 
+  : (rawBaseUrl.endsWith('/api') ? `${rawBaseUrl}/` : `${rawBaseUrl.endsWith('/') ? rawBaseUrl.slice(0, -1) : rawBaseUrl}/api/`);
 
 // Telegram WebApps require HTTPS. If the frontend is on HTTPS, the backend MUST also be on HTTPS.
 // This check helps identify and potentially fix mixed content issues.
-const configuredBaseUrl = (typeof window !== 'undefined' && window.location.protocol === 'https:' && rawBaseUrl.startsWith('http://'))
-  ? rawBaseUrl.replace('http://', 'https://')
-  : rawBaseUrl;
+const configuredBaseUrl = (typeof window !== 'undefined' && window.location.protocol === 'https:' && apiBaseUrl.startsWith('http://'))
+  ? apiBaseUrl.replace('http://', 'https://')
+  : apiBaseUrl;
 
 console.log('API Base URL:', configuredBaseUrl);
 
 export const api = axios.create({
-  baseURL: configuredBaseUrl.endsWith('/') ? configuredBaseUrl.slice(0, -1) : configuredBaseUrl,
+  baseURL: configuredBaseUrl,
   timeout: 20_000,
   headers: {
     'Content-Type': 'application/json',

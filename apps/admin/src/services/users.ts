@@ -35,7 +35,7 @@ const normalizeAdminUser = (user: ApiUser): AdminUser => {
 };
 
 export const getAdminUsers = async (): Promise<AdminUser[]> => {
-  const { data } = await api.get<ApiUser[]>('/admin/users');
+  const { data } = await api.get<ApiUser[]>('admin/users');
   return data.map(normalizeAdminUser);
 };
 

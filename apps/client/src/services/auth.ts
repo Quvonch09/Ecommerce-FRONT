@@ -9,7 +9,7 @@ type AuthResponse = {
 };
 
 export const authenticateWithTelegram = async (payload: { telegramId: number; initData: string }) => {
-  const { data } = await api.post<AuthResponse>('/api/auth/telegram', payload);
+  const { data } = await api.post<AuthResponse>('auth/telegram', payload);
   const token = data.token || data.accessToken || data.jwt;
 
   if (!token) {
@@ -41,6 +41,6 @@ export const loginAdmin = async (phoneNumber: string, password: string) => {
 };
 
 export const getMe = async () => {
-  const { data } = await api.get<UserProfile>('/api/user/me');
+  const { data } = await api.get<UserProfile>('user/me');
   return data;
 };

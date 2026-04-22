@@ -15,21 +15,21 @@ const normalizeProducts = (data: unknown): Product[] => {
 };
 
 export const getProducts = async () => {
-  const { data } = await api.get<{ data: Product[] }>('/products');
+  const { data } = await api.get<{ data: Product[] }>('app/products');
   return normalizeProducts(data.data);
 };
 
 export const createProduct = async (payload: Omit<Product, 'id'>) => {
-  const { data } = await api.post('/products', payload);
+  const { data } = await api.post('app/products', payload);
   return data.data ?? data;
 };
 
 export const updateProduct = async (id: Product['id'], payload: Partial<Product>) => {
-  const { data } = await api.put(`/products/${id}`, payload);
+  const { data } = await api.put(`app/products/${id}`, payload);
   return data.data ?? data;
 };
 
 export const deleteProduct = async (id: Product['id']) => {
-  const { data } = await api.delete(`/products/${id}`);
+  const { data } = await api.delete(`app/products/${id}`);
   return data.data ?? data;
 };

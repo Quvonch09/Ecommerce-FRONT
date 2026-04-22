@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { adminAuthStore } from '../store/auth-store';
 
-const baseURL =
-  import.meta.env.VITE_API_BASE_URL?.trim() || 'https://qdtu.uz';
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || 'https://qdtu.uz';
+const baseURL = rawBaseUrl.endsWith('/api/') 
+  ? rawBaseUrl 
+  : (rawBaseUrl.endsWith('/api') ? `${rawBaseUrl}/` : `${rawBaseUrl.endsWith('/') ? rawBaseUrl.slice(0, -1) : rawBaseUrl}/api/`);
 
 export const api = axios.create({
   baseURL,
