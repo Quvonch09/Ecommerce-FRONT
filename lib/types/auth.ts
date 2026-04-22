@@ -12,3 +12,8 @@ export type UserProfile = {
 export type AuthResult = {
   token: string;
 };
+
+export type TelegramAuthPayload = {
+  initData: string;
+  telegramId?: number;
+};

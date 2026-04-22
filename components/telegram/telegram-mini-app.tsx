@@ -14,6 +14,7 @@ type BootstrapState =
   | { status: 'ready'; user: UserProfile };
 
 const getTelegramInitData = () => window.Telegram?.WebApp?.initData ?? '';
+const getTelegramId = () => window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
 
 const prepareTelegramWebApp = () => {
   const webApp = window.Telegram?.WebApp;
@@ -38,7 +39,10 @@ const bootstrapTelegramUser = async () => {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify({ initData }),
+    body: JSON.stringify({
+      initData,
+      telegramId: getTelegramId(),
+    }),
   });
 
   if (!authResponse.ok) {
