@@ -7,15 +7,11 @@ export const telegramAuthController = {
   async handle(request: Request) {
     try {
       const body = (await request.json()) as { initData?: string; telegramId?: number };
-      const initData = body.initData?.trim();
+      const initData = body.initData?.trim() || '';
       const telegramId =
         typeof body.telegramId === 'number' && Number.isFinite(body.telegramId)
           ? body.telegramId
           : undefined;
-
-      if (!initData) {
-        return NextResponse.json({ message: 'initData is required.' }, { status: 400 });
-      }
 
       const result = await telegramAuthService.authenticate({ initData, telegramId });
       await sessionCookie.set(result.token);
