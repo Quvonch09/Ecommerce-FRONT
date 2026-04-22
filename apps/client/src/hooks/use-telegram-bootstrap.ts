@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { authenticateWithTelegram, getMe } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramId, prepareTelegramApp } from '../utils/telegram';
+import { getTelegramId, getTelegramInitData, prepareTelegramApp } from '../utils/telegram';
 import { useToast } from '../components/feedback/use-toast';
 import type { UserProfile } from '../types';
 import { useAuth } from './use-auth';
@@ -57,8 +57,9 @@ export const useTelegramBootstrap = () => {
     setTelegramUnavailable(false);
     if (telegramId || import.meta.env.DEV) {
       const finalId = telegramId || 123456789;
+      const initData = getTelegramInitData();
       hasAttemptedAuthRef.current = true;
-      authMutation.mutate(Number(finalId));
+      authMutation.mutate({ telegramId: Number(finalId), initData });
     }
   }, [authMutation.isPending, authMutation.mutate, pushToast, token, navigate, location.pathname]);
 
