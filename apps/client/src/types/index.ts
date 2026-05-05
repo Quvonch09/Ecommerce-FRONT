@@ -6,6 +6,15 @@ export type TelegramUser = {
   photo_url?: string;
 };
 
+export type TelegramAuthPayload = {
+  telegramId: number;
+  chatId: number;
+  firstName: string;
+  lastName?: string;
+  username?: string;
+  initData?: string;
+};
+
 export type UserProfile = {
   id: number | string;
   firstName?: string;

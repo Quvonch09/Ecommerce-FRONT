@@ -1,0 +1,1 @@
+var e=(e,t=`UZS`,n=`uz-UZ`)=>new Intl.NumberFormat(n,{style:`currency`,currency:t,maximumFractionDigits:0}).format(e||0);export{e as t};

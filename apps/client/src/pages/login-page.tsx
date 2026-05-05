@@ -4,7 +4,7 @@ import { Lock, Phone, MessageSquareShare } from 'lucide-react';
 import { useToast } from '../components/feedback/use-toast';
 import { authenticateWithTelegram, loginAdmin } from '../services/auth';
 import { authStore } from '../store/auth-store';
-import { getTelegramId } from '../utils/telegram';
+import { getTelegramAuthPayload } from '../utils/telegram';
 import { getErrorMessage } from '../utils/error';
 
 export const LoginPage = () => {
@@ -33,7 +33,7 @@ export const LoginPage = () => {
   });
 
   const tgMutation = useMutation({
-    mutationFn: (telegramId: number) => authenticateWithTelegram(telegramId),
+    mutationFn: authenticateWithTelegram,
     onSuccess: ({ token }) => {
       authStore.setToken(token);
       pushToast({
@@ -62,9 +62,9 @@ export const LoginPage = () => {
   };
 
   const handleTgAuth = () => {
-    const telegramId = getTelegramId();
+    const payload = getTelegramAuthPayload();
 
-    if (!telegramId) {
+    if (!payload) {
       pushToast({
         title: 'ID missing',
         description: 'Telegram ID topilmadi. Mini App Telegram ichida ochilganini tekshiring.',
@@ -73,7 +73,7 @@ export const LoginPage = () => {
       return;
     }
 
-    tgMutation.mutate(telegramId);
+    tgMutation.mutate(payload);
   };
 
   return (

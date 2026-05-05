@@ -2,20 +2,14 @@ import axios from 'axios';
 import { authStore } from '../store/auth-store';
 
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || 'https://qdtu.uz';
-const apiBaseUrl = rawBaseUrl.endsWith('/api/') 
+const apiBaseUrl = rawBaseUrl.endsWith('/api/')
   ? rawBaseUrl 
   : (rawBaseUrl.endsWith('/api') ? `${rawBaseUrl}/` : `${rawBaseUrl.endsWith('/') ? rawBaseUrl.slice(0, -1) : rawBaseUrl}/api/`);
 
-// Telegram WebApps require HTTPS. If the frontend is on HTTPS, the backend MUST also be on HTTPS.
-// This check helps identify and potentially fix mixed content issues.
-const configuredBaseUrl = (typeof window !== 'undefined' && window.location.protocol === 'https:' && apiBaseUrl.startsWith('http://'))
-  ? apiBaseUrl.replace('http://', 'https://')
-  : apiBaseUrl;
-
-console.log('API Base URL:', configuredBaseUrl);
+console.log('API Base URL:', apiBaseUrl);
 
 export const api = axios.create({
-  baseURL: configuredBaseUrl,
+  baseURL: apiBaseUrl,
   timeout: 20_000,
   headers: {
     'Content-Type': 'application/json',
@@ -27,11 +21,10 @@ api.interceptors.request.use((config) => {
   const token = authStore.getSnapshot().token;
 
   if (token) {
-    // Standard Bearer token
     config.headers.Authorization = `Bearer ${token}`;
-    console.debug(`[API Request] Token attached to ${config.url}. (Bearer ${token.substring(0, 10)}...)`);
+    console.debug(`[API Request] Token attached to ${config.url}`);
   } else {
-    console.warn(`[API Request] No token found for ${config.url}. Protected endpoints will fail with 403.`);
+    console.debug(`[API Request] No token attached to ${config.url}`);
   }
 
   return config;
@@ -39,12 +32,12 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => {
-    // Automatically unwrap the standard ApiResponse wrapper
+    // If the response follows the { success: true, data: { ... } } pattern, unwrap it.
     if (
       response.data &&
       typeof response.data === 'object' &&
-      'data' in response.data &&
-      ('success' in response.data || 'status' in response.data)
+      response.data.success === true &&
+      'data' in response.data
     ) {
       return {
         ...response,
@@ -73,6 +66,15 @@ api.interceptors.response.use(
       console.warn('[API 401 Unauthorized] Session expired. Clearing token.');
       authStore.clear();
     }
+
+    console.error('[API Error]', {
+      status,
+      url: error.config?.url,
+      method: error.config?.method,
+      requestHeaders: error.config?.headers,
+      requestData: error.config?.data,
+      responseData: errorData,
+    });
 
     return Promise.reject(error);
   },

@@ -25,11 +25,13 @@ export const authStore = {
   setToken: (token: string) => {
     state = { ...state, token };
     storage.setToken(token);
+    console.log('JWT token:', storage.getToken());
     emit();
   },
   clear: () => {
     state = { ...state, token: null };
     storage.clearToken();
+    console.log('JWT token:', storage.getToken());
     emit();
   },
 };

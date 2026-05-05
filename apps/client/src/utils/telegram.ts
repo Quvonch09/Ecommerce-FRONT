@@ -1,4 +1,4 @@
-import type { TelegramUser } from '../types';
+import type { TelegramAuthPayload, TelegramUser } from '../types';
 
 export const getTelegramWebApp = () => window.Telegram?.WebApp;
 
@@ -36,6 +36,23 @@ export const getTelegramId = (): number | null => {
 
 export const getTelegramInitData = () => getTelegramWebApp()?.initData ?? '';
 
+export const getTelegramAuthPayload = (): TelegramAuthPayload | null => {
+  const user = getTelegramUser();
+
+  if (!user?.id || !user.first_name) {
+    return null;
+  }
+
+  return {
+    telegramId: user.id,
+    chatId: user.id,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    username: user.username,
+    initData: getTelegramInitData() || undefined,
+  };
+};
+
 export const prepareTelegramApp = () => {
   const webApp = getTelegramWebApp();
   if (!webApp) {
@@ -44,6 +61,7 @@ export const prepareTelegramApp = () => {
 
   webApp.ready();
   webApp.expand();
+  console.log('Telegram user:', webApp.initDataUnsafe?.user ?? null);
 };
 
 export const notifyTelegram = (type: 'success' | 'warning' | 'error') => {

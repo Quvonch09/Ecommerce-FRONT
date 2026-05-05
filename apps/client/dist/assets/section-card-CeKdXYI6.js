@@ -1,0 +1,1 @@
+import{i as e}from"./api-BXOKmHcr.js";var t=e(),n=({children:e,className:n=``})=>(0,t.jsx)(`section`,{className:`rounded-[28px] bg-white p-4 shadow-card ${n}`,children:e});export{n as t};
