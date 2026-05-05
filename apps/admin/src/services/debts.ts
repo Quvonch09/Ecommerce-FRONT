@@ -1,5 +1,4 @@
 import type { DebtRecord } from '../types';
-import { api } from './api';
 import { getAdminUsers } from './users';
 
 export const getDebtRecords = async (): Promise<DebtRecord[]> => {
@@ -11,9 +10,4 @@ export const getDebtRecords = async (): Promise<DebtRecord[]> => {
     totalPaid: Number(user.totalPaid ?? 0),
     remainingDebt: Number(user.remainingDebt ?? 0),
   }));
-};
-
-export const markPayment = async (userId: DebtRecord['userId'], amount: number) => {
-  const { data } = await api.post('app/payments', { userId, amount });
-  return data;
 };

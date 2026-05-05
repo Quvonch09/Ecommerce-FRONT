@@ -2,11 +2,13 @@ import axios from 'axios';
 import { authStore } from '../store/auth-store';
 
 // Base URL: VITE_API_BASE_URL = 'https://qdtu.uz' → baseURL = 'https://qdtu.uz/api/'
-const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL as string)?.trim() || 'https://qdtu.uz';
+const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL as string)?.trim() || 'https://qdtu.uz/api';
 
-// Har qanday holatda ham /api/ bilan tugashiga ishonch hosil qilamiz
-const normalizedBase = rawBaseUrl.replace(/\/+$/, ''); // oxiridagi slash lar olib tashlanadi
-const apiBaseUrl = `${normalizedBase}/api/`;
+// Har qanday holatda ham aynan bitta /api/ prefiksi ishlatilishiga ishonch hosil qilamiz
+const normalizedBase = rawBaseUrl.replace(/\/+$/, '');
+const apiBaseUrl = normalizedBase.endsWith('/api')
+  ? `${normalizedBase}/`
+  : `${normalizedBase}/api/`;
 
 console.log('[API] Base URL:', apiBaseUrl);
 

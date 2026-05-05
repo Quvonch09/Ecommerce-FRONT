@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { adminAuthStore } from '../store/auth-store';
 
-const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || 'https://qdtu.uz';
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || 'https://qdtu.uz/api';
 const baseURL = rawBaseUrl.endsWith('/api/') 
   ? rawBaseUrl 
   : (rawBaseUrl.endsWith('/api') ? `${rawBaseUrl}/` : `${rawBaseUrl.endsWith('/') ? rawBaseUrl.slice(0, -1) : rawBaseUrl}/api/`);

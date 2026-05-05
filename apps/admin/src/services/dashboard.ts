@@ -1,7 +1,6 @@
-import type { DashboardMetrics } from '../types';
-import { getDebtRecords } from './debts';
+import type { DashboardMetrics, DashboardSummary } from '../types';
+import { api } from './api';
 import { getAdminOrders } from './orders';
-import { getAdminUsers } from './users';
 
 const labelForDate = (value?: string) => {
   if (!value) {
@@ -15,10 +14,9 @@ const labelForDate = (value?: string) => {
 };
 
 export const getDashboardMetrics = async (): Promise<DashboardMetrics> => {
-  const [orders, debts, users] = await Promise.all([
+  const [{ data: summary }, orders] = await Promise.all([
+    api.get<DashboardSummary>('admin/dashboard'),
     getAdminOrders(),
-    getDebtRecords(),
-    getAdminUsers(),
   ]);
 
   const revenueMap = new Map<string, { revenue: number; orders: number }>();
@@ -32,14 +30,23 @@ export const getDashboardMetrics = async (): Promise<DashboardMetrics> => {
   });
 
   return {
-    totalSales: orders.reduce((sum, order) => sum + Number(order.totalAmount ?? 0), 0),
-    totalOrders: orders.length,
-    totalDebt: debts.reduce((sum, debt) => sum + debt.remainingDebt, 0),
-    totalUsers: users.length,
-    revenueSeries: Array.from(revenueMap.entries()).map(([label, entry]) => ({
-      label,
-      revenue: entry.revenue,
-      orders: entry.orders,
-    })),
+    totalSales: Number(summary.revenue ?? 0),
+    totalOrders: Number(summary.totalOrders ?? orders.length),
+    totalDebt: Number(summary.debtOutstanding ?? 0),
+    totalUsers: Number(summary.totalUsers ?? 0),
+    revenueSeries:
+      revenueMap.size > 0
+        ? Array.from(revenueMap.entries()).map(([label, entry]) => ({
+            label,
+            revenue: entry.revenue,
+            orders: entry.orders,
+          }))
+        : [
+            {
+              label: 'Overview',
+              revenue: Number(summary.revenue ?? 0),
+              orders: Number(summary.totalOrders ?? 0),
+            },
+          ],
   };
 };

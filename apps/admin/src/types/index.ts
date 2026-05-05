@@ -27,10 +27,12 @@ export type Product = {
   id: number | string;
   name: string;
   price: number;
+  costPrice?: number;
   stock?: number;
   imageUrl?: string;
   image?: string;
   description?: string;
+  isActive?: boolean;
 };
 
 export type OrderStatus = 'NEW' | 'CONFIRMED' | 'DELIVERED' | string;
@@ -54,6 +56,7 @@ export type AdminOrder = {
 };
 
 export type DebtRecord = {
+  debtId?: number | string;
   userId: number | string;
   fullName: string;
   totalDebt: number;
@@ -70,5 +73,29 @@ export type DashboardMetrics = {
     label: string;
     revenue: number;
     orders: number;
+  }>;
+};
+
+export type DashboardSummary = {
+  totalUsers: number;
+  totalSellers: number;
+  totalOrders: number;
+  totalProducts: number;
+  revenue: number;
+  estimatedCost: number;
+  estimatedProfit: number;
+  debtOutstanding: number;
+  topProducts?: Array<{
+    productId: number | string;
+    productName: string;
+    soldQuantity: number;
+  }>;
+  lowStockProducts?: Array<{
+    id: number | string;
+    productId: number | string;
+    productName: string;
+    quantity: number;
+    minThreshold?: number;
+    lowStock: boolean;
   }>;
 };

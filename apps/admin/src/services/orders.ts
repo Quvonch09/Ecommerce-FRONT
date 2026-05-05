@@ -10,6 +10,6 @@ export const getAdminOrders = async (): Promise<AdminOrder[]> => {
 };
 
 export const updateOrderStatus = async (id: AdminOrder['id'], status: OrderStatus) => {
-  const { data } = await api.put(`/orders/${id}/status`, { status });
-  return data.data ?? data;
+  const { data } = await api.put(`app/orders/${id}/status`, { status });
+  return data;
 };
